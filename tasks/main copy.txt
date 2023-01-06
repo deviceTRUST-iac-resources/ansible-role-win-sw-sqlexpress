@@ -40,4 +40,4 @@
     name: Install SQL Express
     state: absent
 
-# Needs to be this way. Citrix van't be installed if simply using chocolatey from Ansible to install SQL. Some rights problem.
+# Needs to be this way. Citrix can't be installed if simply using chocolatey from Ansible to install SQL. Some rights problem.
