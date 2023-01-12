@@ -132,6 +132,3 @@
   win_chocolatey:
     name: sql-server-management-studio
     state: present
-
-- include_tasks: sqlreporting.yml
-  when: sql_reporting == true
