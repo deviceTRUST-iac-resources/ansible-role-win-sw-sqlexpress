@@ -4,10 +4,10 @@
     path: c:\install
     state: directory
 
-- name: create the configuration file
-  win_template: 
-    src: files/sql_conf.ini.j2
-    dest: c:\install\sql_conf.ini
+#- name: create the configuration file
+#  win_template: 
+#    src: files/sql_conf.ini.j2
+#    dest: c:\install\sql_conf.ini
 
 - name: Install SQL Pre-Reqs
   win_feature:
@@ -89,7 +89,7 @@
 
 - name: Install MS SQL Server using psexec module
   win_psexec:
-   command: c:\install\SQLEXPRADV_x64_ENU\setup.exe /configurationfile=C:\install\sql_conf.ini /IAcceptSQLServerLicenseTerms
+   command: c:\install\SQLEXPRADV_x64_ENU\setup.exe /IAcceptSQLServerLicenseTerms #/configurationfile=C:\install\sql_conf.ini 
    system: yes
    executable: c:\install\PSTools\psexec.exe
   when: not service_installed.exists 
