@@ -125,9 +125,5 @@
     name: sql-server-management-studio
     state: present
 
-- name: Create database user with name 'vagrant' and password 'vagrant' with all database privileges
-  mysql_user:
-    name: vagrant
-    password: vagrant
-    priv: '*.*:ALL'
-    state: present
+- name: Create database user with name 'vagrant'
+  script: files/add-user.ps1
