@@ -79,14 +79,6 @@
   debug:
     var: service_installed
 
-#- name: Install SQL Server Instance
-#  win_command: c:\install\SQLEXPRADV_x64_ENU\setup.exe /configurationfile=C:\install\sql_conf.ini /IAcceptSQLServerLicenseTerms
-#  args:
-#   chdir: c:\install\SQLEXPRADV_x64_ENU
-#  become: yes
-#  become_user: Administrator 
-#  when: not service_installed.exists
-
 - name: Install MS SQL Server using psexec module
   win_psexec:
    command: c:\install\SQLEXPRADV_x64_ENU\setup.exe /IAcceptSQLServerLicenseTerms /configurationfile=C:\install\sql_conf.ini 
@@ -131,4 +123,11 @@
 - name: Install SQL Management Studio
   win_chocolatey:
     name: sql-server-management-studio
+    state: present
+
+- name: Create database user with name 'vagrant' and password 'vagrant' with all database privileges
+  mysql_user:
+    name: vagrant
+    password: vagrant
+    priv: '*.*:ALL'
     state: present
