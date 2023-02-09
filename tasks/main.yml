@@ -124,6 +124,3 @@
   win_chocolatey:
     name: sql-server-management-studio
     state: present
-
-- name: Create database user with name 'vagrant'
-  script: files/add-user.ps1
