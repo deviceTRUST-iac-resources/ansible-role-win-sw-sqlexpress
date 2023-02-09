@@ -34,7 +34,7 @@ function Create-SQL-Login
         $Command.CommandType = 1
         $Command.Connection = $sqlConnection
         # $Command.CommandText = "create login [$loginName] from windows with default_database=[master], default_language=[us_english]"
-        $Command.CommandText = "create login [$loginName] with default_database=[master], default_language=[us_english]"
+        $Command.CommandText = "create login [$loginName] with password='vagrant', default_database=[master], default_language=[us_english]"
         $sqlConnection.Open()
         $Command.ExecuteNonQuery() | Out-Null
         $Command.CommandText = "exec master..sp_addsrvrolemember @loginame = N'$loginName', @rolename = N'sysadmin'"
