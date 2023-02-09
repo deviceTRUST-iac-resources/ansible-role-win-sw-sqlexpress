@@ -53,4 +53,4 @@ function Create-SQL-Login
     }
 }
 
-Create-SQL-Login "dt\vagrant" $env:COMPUTERNAME
+Create-SQL-Login "vagrant" $env:COMPUTERNAME
