@@ -1,10 +1,56 @@
-$conn = New-Object Microsoft.SqlServer.Management.Common.ServerConnection -ArgumentList $env:ComputerName
-$conn.applicationName = "PowerShell SMO"
-$conn.ServerInstance = ".\SQLEXPRESS"
-$conn.StatementTimeout = 0
-$conn.Connect()
-$smo = New-Object Microsoft.SqlServer.Management.Smo.Server -ArgumentList $conn
-$SqlUser = New-Object -TypeName Microsoft.SqlServer.Management.Smo.Login -ArgumentList $smo,"${env:ComputerName}\vagrant"
-$SqlUser.LoginType = 'WindowsUser'
-$sqlUser.PasswordPolicyEnforced = $false
-$SqlUser.Create()
+function SQL-Get-Server-Instance
+{
+    param (
+        [parameter(Mandatory = $true)][string] $DatabaseServer,
+        [parameter(Mandatory = $true)][string] $InstanceName
+    )
+
+    if (!$InstanceName -or $InstanceName -eq "" -or $InstanceName -eq "MSSQLSERVER")
+        { return $DatabaseServer }
+    else
+        { return "$DatabaseServer\$InstanceName" }
+}
+
+
+function Create-SQL-Login
+{
+    param (
+        [parameter(Mandatory = $true)][string] $loginName,
+        [parameter(Mandatory = $true)][string] $DatabaseServer,
+        [parameter(Mandatory = $false)][string] $InstanceName = "MSSQLSERVER"
+    )
+
+    $sqlConnection = $null
+
+    try
+    {
+        $Error.Clear()
+
+        $ServerInstance = SQL-Get-Server-Instance $DatabaseServer $InstanceName
+        $sqlConnection = New-Object System.Data.SqlClient.SqlConnection
+        $sqlConnection.ConnectionString = "Server=$ServerInstance;Database=master;Trusted_Connection=True;"
+
+        $Command = New-Object System.Data.SqlClient.SqlCommand
+        $Command.CommandType = 1
+        $Command.Connection = $sqlConnection
+        $Command.CommandText = "create login [$loginName] from windows with default_database=[master], default_language=[us_english]"
+        $sqlConnection.Open()
+        $Command.ExecuteNonQuery() | Out-Null
+        $Command.CommandText = "exec master..sp_addsrvrolemember @loginame = N'$loginName', @rolename = N'sysadmin'"
+        $Command.ExecuteNonQuery() | Out-Null
+    }
+
+    catch
+    {
+        $str = (([string] $Error).Split(':'))[1]
+        Write-Error ($str.Replace('"', ''))
+    }
+
+    finally
+    {
+        if ($sqlConnection)
+            { $sqlConnection.Close() }
+    }
+}
+
+Create-SQL-Login $env:COMPUTERNAME\vagrant $env:COMPUTERNAME
